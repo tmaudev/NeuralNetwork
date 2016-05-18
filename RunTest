@@ -1,0 +1,2 @@
+g++ NeuralNetwork.cpp Neuron.cpp NNTest.cpp -o test
+./test
