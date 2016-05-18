@@ -10,18 +10,30 @@ Neuron::Neuron() {
 
 }
 
+Neuron::Neuron(vector<Neuron> inputs) {
+   initNeuron(inputs, LINEAR_ACTIVATION);
+}
+
 Neuron::Neuron(vector<Neuron> inputs, int activation_function) {
-   input_neurons = inputs;
+   initNeuron(inputs, activation_function);
+}
+
+Neuron::Neuron(vector<Neuron> inputs, vector<float> weights, float bias, int activation_function) {
+   activation = activation_function;
+}
+
+void Neuron::initNeuron(vector<Neuron> inputs, int activation_function) {
+  input_neurons = inputs;
 
    for (int i = 0; i < input_neurons.size(); i++) {
       weights.push_back(rand() / (float)RAND_MAX);
    }
 
    bias = rand() / (float)RAND_MAX;
-}
 
-Neuron::Neuron(vector<Neuron> inputs, vector<float> weights, float bias, int activation_function) {
    activation = activation_function;
+
+   output = 0;
 }
 
 vector<float> Neuron::getWeights() {
