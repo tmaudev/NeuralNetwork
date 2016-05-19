@@ -159,3 +159,51 @@ vector<float> NeuralNetwork::calculateOutputs() {
    return output;
 }
 
+float NeuralNetwork::hyperbolicTangentDerivative(float input) {
+   float output = (HYPERBOLIC_TANGENT_SLOPE / HYPERBOLIC_TANGENT_MAX) *
+                  (HYPERBOLIC_TANGENT_MAX - input) *
+                  (HYPERBOLIC_TANGENT_MAX + input);
+
+   return output;
+}
+
+void NeuralNetwork::updateHiddenLayers() {
+   for (int i = ) {
+
+   }
+}
+
+void NeuralNetwork::updateOutputLayer(vector<float> training_output) {
+   float error, deriv_act, gradient, actual_output;
+
+   /* Iterate Through Each Neuron */
+   for (int i = 0; i < output_layer.size(); i++) {
+      actual_output = output_layer[i].getOutput();
+      error = training_output[i] - actual_output;
+      deriv_act = hyperbolicTangentDerivative(actual_output);
+
+      /* Iterate Through Each Weight */
+      for (int j = 0; j < output_layer[i].weights.size(); j++) {
+         gradient = -error * deriv_act * actual_output;
+         output_layer[i].weights[j] -= training_step * gradient;
+      }
+   }
+}
+
+/* Train Neural Network via Supervised Training */
+void NeuralNetwork::train(float step, int epoch, vector< vector<float> > training_input, vector< vector<float> > training_output) {
+   training_step = step;
+
+   for (int i = 0; i < epoch; i++) {
+      //RANDOMIZE ORDER??
+
+      //Calculate Network
+      calculate(training_input[i % epoch]);
+
+      //Update Ouput Layer Node Weights
+      updateOutputLayer(training_output[i % epoch]);
+
+      //Update Hidden Layers
+      updateHiddenLayers();
+   }
+}

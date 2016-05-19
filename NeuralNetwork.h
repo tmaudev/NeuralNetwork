@@ -38,6 +38,9 @@ class NeuralNetwork {
       /* Number of Hidden Layers */
       int num_hidden_layers;
 
+      /* Training Step */
+      int training_step;
+
       /* Contains Neurons of Hidden Layers */
       vector< vector<Neuron> > hidden_layers;
 

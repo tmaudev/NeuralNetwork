@@ -13,8 +13,8 @@
 #define HT_ACTIVATION 0
 #define LINEAR_ACTIVATION 1
 
-#define HYPERBOLIC_TANGENT_MAX 1
-#define HYPERBOLIC_TANGENT_SLOPE 1
+#define HYPERBOLIC_TANGENT_MAX 1.0f
+#define HYPERBOLIC_TANGENT_SLOPE 1.0f
 
 using namespace std;
 
@@ -30,7 +30,7 @@ class Neuron {
       Neuron(vector<Neuron> inputs, int activation_function);
 
       /* Neuron Constructor to Specify Weights/Biases */
-      Neuron(vector<Neuron> inputs, vector<float> weights, float bias, int activation_function);
+      //Neuron(vector<Neuron> inputs, vector<float> weights, float bias, int activation_function);
 
       /* Return Weights of Neuron */
       vector<float> getWeights();
