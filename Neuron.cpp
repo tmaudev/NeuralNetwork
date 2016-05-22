@@ -11,12 +11,12 @@ Neuron::Neuron() {
 }
 
 /* Neuron Constructor with Linear Activation Function */
-Neuron::Neuron(vector<Neuron> inputs) {
+Neuron::Neuron(vector<Neuron> *inputs) {
    initNeuron(inputs, LINEAR_ACTIVATION);
 }
 
 /* Neuron Constructor for Non-Input Layer */
-Neuron::Neuron(vector<Neuron> inputs, int activation_function) {
+Neuron::Neuron(vector<Neuron> *inputs, int activation_function) {
    initNeuron(inputs, activation_function);
 }
 
@@ -26,10 +26,10 @@ Neuron::Neuron(vector<Neuron> inputs, int activation_function) {
 }*/
 
 /* Initialize Neuron */
-void Neuron::initNeuron(vector<Neuron> inputs, int activation_function) {
+void Neuron::initNeuron(vector<Neuron> *inputs, int activation_function) {
   input_neurons = inputs;
 
-   for (int i = 0; i < input_neurons.size(); i++) {
+   for (int i = 0; i < (*input_neurons).size(); i++) {
       weights.push_back(rand() / (float)RAND_MAX);
    }
 
@@ -46,6 +46,11 @@ vector<float> Neuron::getWeights() {
    return weights;
 }
 
+/* Add to Weights for Updating */
+void Neuron::updateWeight(int index, float value) {
+   weights[index] += value;
+}
+
 /* Return Bias of Neuron */
 float Neuron::getBias() {
    return bias;
@@ -56,17 +61,27 @@ float Neuron::getOutput() {
    return output;
 }
 
+/* Return Calculated Derivative of Activation Function */
+float Neuron::getPhiDeriv() {
+   return phi_deriv;
+}
+
 /* Set Output Value of Neuron (Ex: Input Neurons)*/
 void Neuron::setOutput(float value) {
    output = value;
+}
+
+/* Calculate Activation Derivative */
+void Neuron::calculatePhiDeriv() {
+   phi_deriv = hyperbolicTangentDerivative(output);
 }
 
 /* Calculate Neuron Output */
 void Neuron::calculate() {
    float sum = 0;
 
-   for (int i = 0; i < input_neurons.size(); i++) {
-      sum += input_neurons[i].getOutput() * weights[i];
+   for (int i = 0; i < (*input_neurons).size(); i++) {
+      sum += (*input_neurons)[i].getOutput() * weights[i];
    }
 
    sum += bias;
@@ -74,8 +89,11 @@ void Neuron::calculate() {
    if (activation == HT_ACTIVATION) {
       output = hyperbolic_tangent(sum, HYPERBOLIC_TANGENT_MAX, HYPERBOLIC_TANGENT_SLOPE);
    }
-   
-   output = sum;
+   else {
+      output = sum;
+   }
+
+   //cout << "Output of Neuron: " << output << endl;
 }
 
 /* Hyperbolic Tangent Activation Function */
@@ -87,4 +105,11 @@ float Neuron::hyperbolic_tangent(float input, float abs_max, float slope) {
    output = abs_max * ((exp_pos - exp_neg) / (exp_pos + exp_neg));
 
    return output;
+}
+
+/* Derivative of Hyperbolic Tangent Activation Function */
+float Neuron::hyperbolicTangentDerivative(float input) {
+   return (HYPERBOLIC_TANGENT_SLOPE / HYPERBOLIC_TANGENT_MAX) *
+          (HYPERBOLIC_TANGENT_MAX - input) *
+          (HYPERBOLIC_TANGENT_MAX + input);
 }

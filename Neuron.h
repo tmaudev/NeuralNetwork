@@ -24,10 +24,10 @@ class Neuron {
       Neuron();
 
       /* Neuron Constructor with Linear Activation Function */
-      Neuron::Neuron(vector<Neuron> inputs)
+      Neuron(vector<Neuron> *inputs);
 
       /* Neuron Constructor for Non-Input Layer */
-      Neuron(vector<Neuron> inputs, int activation_function);
+      Neuron(vector<Neuron> *inputs, int activation_function);
 
       /* Neuron Constructor to Specify Weights/Biases */
       //Neuron(vector<Neuron> inputs, vector<float> weights, float bias, int activation_function);
@@ -35,27 +35,36 @@ class Neuron {
       /* Return Weights of Neuron */
       vector<float> getWeights();
 
+      /* Add to Weights for Updating */
+      void updateWeight(int index, float value);
+
       /* Return Bias of Neuron */
       float getBias();
 
       /* Return Last Calculated Output of Neuron */
       float getOutput();
 
+      /* Return Calculated Derivative of Activation Function */
+      float getPhiDeriv();
+
       /* Set Output Value of Neuron (Ex: Input Neurons)*/
       void setOutput(float value);
+
+      /* Calculate Activation Derivative */
+      void calculatePhiDeriv();
 
       /* Calculate Neuron Output */
       void calculate();
 
    private:
-      /* Input Layer */
-      vector<Neuron> input_neurons;
-
       /* Neuron Weights */
       vector<float> weights;
 
       /* Neuron Bias */
       float bias;
+
+      /* Input Layer */
+      vector<Neuron> *input_neurons;
 
       /* Calculated Output */
       float output;
@@ -63,11 +72,17 @@ class Neuron {
       /* Activation Function */
       int activation;
 
+      /* Derivative of Activation Function */
+      float phi_deriv;
+
       /* Initialize Neuron */
-      void initNeuron(vector<Neuron> inputs, int activation_function);
+      void initNeuron(vector<Neuron> *inputs, int activation_function);
 
       /* Hyperbolic Tangent Activation Function */
       float hyperbolic_tangent(float input, float abs_max, float slope);
+
+      /* Derivative of Hyperbolic Tangent Activation Function */
+      float hyperbolicTangentDerivative(float input);
 };
 
 #endif

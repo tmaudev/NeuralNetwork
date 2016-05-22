@@ -28,6 +28,9 @@ class NeuralNetwork {
       /* Calculate Network Output (Feedforward) */
       vector<float> calculate(vector<float> inputs);
 
+      /* Train Neural Network via Supervised Training */
+      void NeuralNetwork::train(float step, int epoch, vector< vector<float> > training_input, vector< vector<float> > training_output);
+
    private:
       /* Number of Network Inputs */
       int num_inputs;
@@ -41,14 +44,17 @@ class NeuralNetwork {
       /* Training Step */
       int training_step;
 
-      /* Contains Neurons of Hidden Layers */
-      vector< vector<Neuron> > hidden_layers;
+      /* Vector of Hidden Layers (Includes Output Layer) */
+      vector< vector<Neuron>* > hidden_layers;
 
       /* Contains Input Neurons */
-      vector<Neuron> input_layer;
+      vector<Neuron> *input_layer;
 
       /* Contains Output Neurons */
-      vector<Neuron> output_layer;
+      vector<Neuron> *output_layer;
+
+      /* Holds Calculation of Layer Cost */
+      vector<float> layer_cost;
 
       /* Feed Inputs Into Network */
       void setInputs(vector<float> inputs);
@@ -58,6 +64,12 @@ class NeuralNetwork {
 
       /* Calculate Outputs of Network */
       vector<float> calculateOutputs();
+
+      void NeuralNetwork::updateHiddenLayers();
+
+     // void NeuralNetwork::updateOutputLayer(vector<float> training_output);
+
+      void NeuralNetwork::prepareUpdate(vector<float> training_output);
 };
 
 #endif
