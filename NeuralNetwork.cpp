@@ -10,6 +10,7 @@
 NeuralNetwork::NeuralNetwork(int inputs, vector<int> hidden_config, int outputs) {
    /* Temporary Vector for Creating Layers */
    vector<Neuron> *layer;
+   vector<float> *costs;
 
    //THROW ERRORS IF WRONG INPUTS
 
@@ -20,14 +21,18 @@ NeuralNetwork::NeuralNetwork(int inputs, vector<int> hidden_config, int outputs)
 
    /* Create Vector of Input Nodes */
    layer = new vector<Neuron>();
+   costs = new vector<float>();
    for (int i = 0; i < num_inputs; i++) {
       (*layer).push_back(Neuron());
+      (*costs).push_back(0);
    }
    input_layer = layer;
+   layer_costs.push_back(costs);
 
    /* Create Vector of Hidden Layers */
    for (int i = 0; i < num_hidden_layers; i++) {
       layer = new vector<Neuron>();
+      costs = new vector<float>();
       
       /* Create Vector of Nodes for Each Layer */
       for (int j = 0; j < hidden_config[i]; j++) {
@@ -39,18 +44,21 @@ NeuralNetwork::NeuralNetwork(int inputs, vector<int> hidden_config, int outputs)
          else {
             (*layer).push_back(Neuron(input_layer, HT_ACTIVATION));
          }
+         (*costs).push_back(0);
       }
       hidden_layers.push_back(layer);
-      layer_cost.push_back(0);
+      layer_costs.push_back(costs);
    }
 
    /* Create Output Layer (Linear Activation Function) */
    layer = new vector<Neuron>();
+   costs = new vector<float>();
    for (int i = 0; i < outputs; i++) {
       (*layer).push_back(Neuron(hidden_layers[num_hidden_layers - 1], LINEAR_ACTIVATION));
+      (*costs).push_back(0);
    }
    hidden_layers.push_back(layer);
-   layer_cost.push_back(0);
+   layer_costs.push_back(costs);
    output_layer = layer;
 }
 
@@ -65,7 +73,7 @@ void NeuralNetwork::printNetworkSetup() {
    }
 
    /* Print Size of Output Layer */
-   cout << " " << num_outputs << endl;
+   cout << " " << num_outputs << endl << endl;
 }
 
 /* Print Weights and Biases of Entire Network */
@@ -126,8 +134,10 @@ vector<float> NeuralNetwork::calculate(vector<float> inputs) {
    setInputs(inputs);
 
    /* Calculate Hidden Neuron Outputs */
+   //cout << "Hidden: " << endl;
    calculateHidden();
 
+   //cout << "Output: " << endl;
    /* Return Final Neural Network Outputs */
    return calculateOutputs();
 }
@@ -135,6 +145,7 @@ vector<float> NeuralNetwork::calculate(vector<float> inputs) {
 /* Feed Inputs Into Network */
 void NeuralNetwork::setInputs(vector<float> inputs) {
    for (int i = 0; i < (*input_layer).size(); i++) {
+      //cout << inputs[i] << endl;
       (*input_layer)[i].setOutput(inputs[i]);
    }
 }
@@ -142,7 +153,7 @@ void NeuralNetwork::setInputs(vector<float> inputs) {
 /* Calculate Outputs of Hidden Neurons */
 void NeuralNetwork::calculateHidden() {
    /* Iterate Through Hidden Layers */
-   for (int i = 0; i < hidden_layers.size(); i++) {
+   for (int i = 0; i < num_hidden_layers; i++) {
 
       /* Iterate Through Neurons */
       for (int j = 0; j < (*hidden_layers[i]).size(); j++) {
@@ -164,14 +175,6 @@ vector<float> NeuralNetwork::calculateOutputs() {
    }
 
    return output;
-}
-
-
-
-void NeuralNetwork::updateHiddenLayers() {
-   //for (int i = ) {
-
-   //}
 }
 
 // void NeuralNetwork::updateOutputLayer(vector<float> training_output) {
@@ -196,6 +199,24 @@ void NeuralNetwork::updateHiddenLayers() {
 
 // }
 
+void NeuralNetwork::updateWeights() {
+   vector<float> weights;
+   float gradient, phi_deriv;
+
+   for (int i = 0; i < hidden_layers.size(); i++) {
+      for (int j = 0; j < (*hidden_layers[i]).size(); j++) {
+         weights = (*hidden_layers[i])[j].getWeights();
+
+         for (int k = 0; k < weights.size(); k++) {
+            phi_deriv = (*hidden_layers[i])[j].getPhiDeriv();
+            gradient = (*layer_costs[i + 1])[j] * phi_deriv * (*hidden_layers[i])[j].getInput(k);
+            //cout << "Gradient: " << gradient << endl;
+            (*hidden_layers[i])[j].updateWeight(k, training_step * gradient);
+         }
+      }
+   }
+}
+
 void NeuralNetwork::prepareUpdate(vector<float> training_output) {
    float error, phi_deriv;
    vector<float> weights;
@@ -207,40 +228,66 @@ void NeuralNetwork::prepareUpdate(vector<float> training_output) {
       }
    }
 
+   for (int i = 0; i < num_outputs; i++) {
+      error = training_output[i] - (*hidden_layers[num_hidden_layers])[i].getOutput();
+      (*layer_costs[num_hidden_layers + 1])[i] = -error;
+   }
+
    /* Calculate Layer Costs */
    for (int i = num_hidden_layers; i >= 0; i--) {
-      layer_cost[i] = 0;
-      for (int j = 0; j < (*hidden_layers[i]).size(); j++) {
-         weights = (*hidden_layers[i])[j].getWeights();
-         /* Output Layer */
-         if (i == num_hidden_layers) {
-            error = training_output[j] - (*hidden_layers[i])[j].getOutput();
-            phi_deriv = (*hidden_layers[i])[j].getPhiDeriv();
-            layer_cost[i] += -error * phi_deriv * weights[j];
-         }
-         else {
+      for (int j = 0; j < (*layer_costs[i]).size(); j++) {
 
+         (*layer_costs[i])[j] = 0;
+
+         for (int k = 0; k < (*hidden_layers[i]).size(); k++) {
+            weights = (*hidden_layers[i])[k].getWeights();
+
+            phi_deriv = (*hidden_layers[i])[k].getPhiDeriv();
+            (*layer_costs[i])[j] += (*layer_costs[i + 1])[k] * phi_deriv * weights[j];
+            //cout << "Phi: " << phi_deriv << endl;
+
+            /* Output Layer */
+            // if (i == num_hidden_layers) {
+            //    error = training_output[k] - (*hidden_layers[i])[k].getOutput();
+            //    phi_deriv = (*hidden_layers[i])[k].getPhiDeriv();
+            //    (*layer_costs[i])[j] += -error * phi_deriv * weights[j];
+            // }
+            // else {
+            //    phi_deriv = (*hidden_layers[i])[k].getPhiDeriv(); // changed this to k instead of j
+            //    (*layer_costs[i])[j] += (*layer_costs[i + 1])[k] * phi_deriv * weights[j];
+            // }
          }
       }
+     // cout << "Layer Cost: " << layer_cost[i] << endl;
    }   
 }
 
 /* Train Neural Network via Supervised Training */
 void NeuralNetwork::train(float step, int epoch, vector< vector<float> > training_input, vector< vector<float> > training_output) {
+   int size = training_input.size();
+
    training_step = step;
 
    for (int i = 0; i < epoch; i++) {
       //RANDOMIZE ORDER??
 
       //Calculate Network
-      calculate(training_input[i % epoch]);
+      //cout << "Input: " << training_input[i % size][0] << endl;
+      // cout << "Output: " << training_output[i % size][0] << endl;
+      //cout << training_input[i % size].size() << endl;
+      //cout << "Training Pair: " << training_input[i % size][0] << "  |  " << training_output[i % size][0] << endl;
 
-      prepareUpdate(training_output[i % epoch]);
+      calculate(training_input[i % size]);
 
+      prepareUpdate(training_output[i % size]);
+
+      updateWeights();
+
+      if (errno == ERANGE) {
+         cout << "FAIL" << endl;
+         break;
+      }
       //Update Ouput Layer Node Weights
       //updateOutputLayer(training_output[i % epoch]);
-
-      //Update Hidden Layers
-      updateHiddenLayers();
    }
 }

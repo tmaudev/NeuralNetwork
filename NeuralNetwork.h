@@ -42,7 +42,7 @@ class NeuralNetwork {
       int num_hidden_layers;
 
       /* Training Step */
-      int training_step;
+      float training_step;
 
       /* Vector of Hidden Layers (Includes Output Layer) */
       vector< vector<Neuron>* > hidden_layers;
@@ -54,7 +54,7 @@ class NeuralNetwork {
       vector<Neuron> *output_layer;
 
       /* Holds Calculation of Layer Cost */
-      vector<float> layer_cost;
+      vector< vector<float>* > layer_costs;
 
       /* Feed Inputs Into Network */
       void setInputs(vector<float> inputs);
@@ -65,11 +65,10 @@ class NeuralNetwork {
       /* Calculate Outputs of Network */
       vector<float> calculateOutputs();
 
-      void NeuralNetwork::updateHiddenLayers();
-
      // void NeuralNetwork::updateOutputLayer(vector<float> training_output);
 
-      void NeuralNetwork::prepareUpdate(vector<float> training_output);
+      void prepareUpdate(vector<float> training_output);
+      void updateWeights();
 };
 
 #endif

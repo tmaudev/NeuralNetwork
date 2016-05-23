@@ -47,6 +47,9 @@ class Neuron {
       /* Return Calculated Derivative of Activation Function */
       float getPhiDeriv();
 
+      /* Return Input at Index */
+      float getInput(int index);
+
       /* Set Output Value of Neuron (Ex: Input Neurons)*/
       void setOutput(float value);
 

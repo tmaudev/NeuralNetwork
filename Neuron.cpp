@@ -48,7 +48,7 @@ vector<float> Neuron::getWeights() {
 
 /* Add to Weights for Updating */
 void Neuron::updateWeight(int index, float value) {
-   weights[index] += value;
+   weights[index] -= value;
 }
 
 /* Return Bias of Neuron */
@@ -66,6 +66,11 @@ float Neuron::getPhiDeriv() {
    return phi_deriv;
 }
 
+/* Return Input at Index */
+float Neuron::getInput(int index) {
+   return (*input_neurons)[index].getOutput();
+}
+
 /* Set Output Value of Neuron (Ex: Input Neurons)*/
 void Neuron::setOutput(float value) {
    output = value;
@@ -73,7 +78,12 @@ void Neuron::setOutput(float value) {
 
 /* Calculate Activation Derivative */
 void Neuron::calculatePhiDeriv() {
-   phi_deriv = hyperbolicTangentDerivative(output);
+   if (activation == HT_ACTIVATION) {
+      phi_deriv = hyperbolicTangentDerivative(output);
+   }
+   else {
+      phi_deriv = 1;
+   }
 }
 
 /* Calculate Neuron Output */
@@ -81,19 +91,25 @@ void Neuron::calculate() {
    float sum = 0;
 
    for (int i = 0; i < (*input_neurons).size(); i++) {
+      //cout << "   Input: " << (*input_neurons)[i].getOutput() << endl;
       sum += (*input_neurons)[i].getOutput() * weights[i];
+      //cout << "   Weight: " << weights[i] << endl;
+      //cout << "   Index: " << i << endl;
    }
 
-   sum += bias;
+   //sum += bias;
+   //cout << "Weight: " << weights[0] << endl;
+   //cout << "   Sum: " << sum << endl;
 
    if (activation == HT_ACTIVATION) {
+      //cout << "   HT" << endl;
       output = hyperbolic_tangent(sum, HYPERBOLIC_TANGENT_MAX, HYPERBOLIC_TANGENT_SLOPE);
    }
    else {
       output = sum;
    }
 
-   //cout << "Output of Neuron: " << output << endl;
+   //cout << "   Output of Neuron: " << output << endl;
 }
 
 /* Hyperbolic Tangent Activation Function */
@@ -102,7 +118,18 @@ float Neuron::hyperbolic_tangent(float input, float abs_max, float slope) {
    float exp_pos = exp(slope * input);
    float exp_neg = exp(-slope * input);
 
-   output = abs_max * ((exp_pos - exp_neg) / (exp_pos + exp_neg));
+   if (exp_pos == HUGE_VALF || exp_neg == HUGE_VALF) {
+      //cout << "POS" << endl;
+      if (input > 0) {
+         output = abs_max;
+      }
+      else {
+         output = -abs_max;
+      }
+   }
+   else {
+      output = abs_max * ((exp_pos - exp_neg) / (exp_pos + exp_neg));
+   }
 
    return output;
 }
