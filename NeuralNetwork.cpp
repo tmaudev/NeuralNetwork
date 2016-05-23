@@ -199,9 +199,9 @@ vector<float> NeuralNetwork::calculateOutputs() {
 
 // }
 
-void NeuralNetwork::updateWeights() {
+void NeuralNetwork::updateWB() {
    vector<float> weights;
-   float gradient, phi_deriv;
+   float gradient, phi_deriv, bias_gradient;
 
    for (int i = 0; i < hidden_layers.size(); i++) {
       for (int j = 0; j < (*hidden_layers[i]).size(); j++) {
@@ -210,9 +210,12 @@ void NeuralNetwork::updateWeights() {
          for (int k = 0; k < weights.size(); k++) {
             phi_deriv = (*hidden_layers[i])[j].getPhiDeriv();
             gradient = (*layer_costs[i + 1])[j] * phi_deriv * (*hidden_layers[i])[j].getInput(k);
-            //cout << "Gradient: " << gradient << endl;
             (*hidden_layers[i])[j].updateWeight(k, training_step * gradient);
          }
+
+         /* Update Bias */
+         bias_gradient = (*layer_costs[i + 1])[j] * phi_deriv;
+         (*hidden_layers[i])[j].updateBias(training_step * bias_gradient);
       }
    }
 }
@@ -265,23 +268,25 @@ void NeuralNetwork::prepareUpdate(vector<float> training_output) {
 /* Train Neural Network via Supervised Training */
 void NeuralNetwork::train(float step, int epoch, vector< vector<float> > training_input, vector< vector<float> > training_output) {
    int size = training_input.size();
+   int random;
 
    training_step = step;
 
    for (int i = 0; i < epoch; i++) {
       //RANDOMIZE ORDER??
-
+      random = (rand() / (float)RAND_MAX) * (size - 1);
+      //cout << random << endl;
       //Calculate Network
       //cout << "Input: " << training_input[i % size][0] << endl;
       // cout << "Output: " << training_output[i % size][0] << endl;
       //cout << training_input[i % size].size() << endl;
       //cout << "Training Pair: " << training_input[i % size][0] << "  |  " << training_output[i % size][0] << endl;
 
-      calculate(training_input[i % size]);
+      calculate(training_input[random]);
 
-      prepareUpdate(training_output[i % size]);
+      prepareUpdate(training_output[random]);
 
-      updateWeights();
+      updateWB();
 
       if (errno == ERANGE) {
          cout << "FAIL" << endl;

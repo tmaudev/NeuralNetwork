@@ -46,9 +46,14 @@ vector<float> Neuron::getWeights() {
    return weights;
 }
 
-/* Add to Weights for Updating */
+/* Adjust Weights */
 void Neuron::updateWeight(int index, float value) {
    weights[index] -= value;
+}
+
+/* Adjust Bias */
+void Neuron::updateBias(float value) {
+   bias -= value;
 }
 
 /* Return Bias of Neuron */
@@ -82,7 +87,7 @@ void Neuron::calculatePhiDeriv() {
       phi_deriv = hyperbolicTangentDerivative(output);
    }
    else {
-      phi_deriv = 1;
+      phi_deriv = LINEAR_SCALE;
    }
 }
 
@@ -97,7 +102,7 @@ void Neuron::calculate() {
       //cout << "   Index: " << i << endl;
    }
 
-   //sum += bias;
+   sum += bias;
    //cout << "Weight: " << weights[0] << endl;
    //cout << "   Sum: " << sum << endl;
 
@@ -106,7 +111,7 @@ void Neuron::calculate() {
       output = hyperbolic_tangent(sum, HYPERBOLIC_TANGENT_MAX, HYPERBOLIC_TANGENT_SLOPE);
    }
    else {
-      output = sum;
+      output = sum * LINEAR_SCALE;
    }
 
    //cout << "   Output of Neuron: " << output << endl;
@@ -114,24 +119,26 @@ void Neuron::calculate() {
 
 /* Hyperbolic Tangent Activation Function */
 float Neuron::hyperbolic_tangent(float input, float abs_max, float slope) {
-   float output = 0;
+   // float output = 0;
    float exp_pos = exp(slope * input);
    float exp_neg = exp(-slope * input);
 
    if (exp_pos == HUGE_VALF || exp_neg == HUGE_VALF) {
-      //cout << "POS" << endl;
       if (input > 0) {
          output = abs_max;
       }
       else {
          output = -abs_max;
       }
+      //cout << output << endl;
    }
    else {
       output = abs_max * ((exp_pos - exp_neg) / (exp_pos + exp_neg));
+      //cout << "HERE: " << input << endl;
    }
 
    return output;
+   //return tanh(input);
 }
 
 /* Derivative of Hyperbolic Tangent Activation Function */

@@ -16,6 +16,8 @@
 #define HYPERBOLIC_TANGENT_MAX 1.0f
 #define HYPERBOLIC_TANGENT_SLOPE 1.0f
 
+#define LINEAR_SCALE 1.0f
+
 using namespace std;
 
 class Neuron {
@@ -37,6 +39,9 @@ class Neuron {
 
       /* Add to Weights for Updating */
       void updateWeight(int index, float value);
+
+      /* Adjust Bias */
+      void updateBias(float value);
 
       /* Return Bias of Neuron */
       float getBias();

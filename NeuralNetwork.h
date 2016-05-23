@@ -68,7 +68,7 @@ class NeuralNetwork {
      // void NeuralNetwork::updateOutputLayer(vector<float> training_output);
 
       void prepareUpdate(vector<float> training_output);
-      void updateWeights();
+      void updateWB();
 };
 
 #endif
