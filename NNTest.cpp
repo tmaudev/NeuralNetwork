@@ -35,6 +35,12 @@ int main() {
                 1530,
                 1540,
                 1550,
+                1500,
+                1510,
+                1520,
+                1530,
+                1540,
+                1550,
                 1560,
                 1570,
                 1580,
@@ -189,9 +195,21 @@ int main() {
                 1470,
                 1480,
                 1490,
+                1500,
+                1450,
+                1460,
+                1470,
+                1480,
+                1490,
                 1500};
 
    float t[] = {-0.04,
+                -0.04,
+                -0.04,
+                0.02,
+                0.08,
+                0.14,
+                -0.04,
                 -0.04,
                 -0.04,
                 0.02,
@@ -351,6 +369,12 @@ int main() {
                 -0.04,
                 0,
                 0,
+                0,
+                -0.1,
+                -0.06,
+                -0.04,
+                0,
+                0,
                 0};
 
    int p_size = sizeof(p) / sizeof(*p);
@@ -401,7 +425,7 @@ int main() {
       cout << "Input: " << test_input[0] << "   Output: " << test_output[0] << endl;
    }
 
-   net.train(0.001, 10000000, training_input, training_output);
+   net.train(0.00001, 10000000, training_input, training_output);
 
    //outputs = net.calculate(input);
 
