@@ -35,6 +35,7 @@ void Neuron::initNeuron(vector<Neuron> *inputs, int activation_function) {
    }
 
    bias = rand() / (float)RAND_MAX;
+   d_bias = 0;
 
    activation = activation_function;
 
@@ -49,13 +50,30 @@ vector<float> Neuron::getWeights() {
 
 /* Adjust Weights */
 void Neuron::updateWeight(int index, float value) {
-   weights[index] -= value;
-   d_weights[index] = value;
+   float dw;
+
+   if (MOMENTUM) {
+      dw = value + LEARNING_SCALE * d_weights[index];
+      weights[index] -= dw;
+      d_weights[index] = dw;
+   }
+   else {
+      weights[index] -= value;
+   }
 }
 
 /* Adjust Bias */
 void Neuron::updateBias(float value) {
-   bias -= value;
+   float db;
+
+   if (MOMENTUM) {
+      db = value + LEARNING_SCALE * d_bias;
+      bias -= db;
+      d_bias = db;
+   }
+   else {
+      bias -= value;
+   }
 }
 
 /* Return Bias of Neuron */

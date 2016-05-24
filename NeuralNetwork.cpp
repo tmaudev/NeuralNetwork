@@ -239,7 +239,7 @@ void NeuralNetwork::train(float step, int epoch, vector< vector<float> > trainin
 
    for (int i = 0; i < epoch; i++) {
 
-      random = (rand() / (float)RAND_MAX) * (size);
+      random = rand() % size;
       //cout << random << endl;
 
       calculate(training_input[random]);

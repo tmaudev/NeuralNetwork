@@ -17,6 +17,9 @@
 #define HYPERBOLIC_TANGENT_SLOPE 1.0f
 
 #define LINEAR_SCALE 1.0f
+#define LEARNING_SCALE 0.2f
+
+#define MOMENTUM true
 
 using namespace std;
 
@@ -73,6 +76,9 @@ class Neuron {
 
       /* Neuron Bias */
       float bias;
+
+      /* Previous Bias Change */
+      float d_bias;
 
       /* Input Layer */
       vector<Neuron> *input_neurons;
