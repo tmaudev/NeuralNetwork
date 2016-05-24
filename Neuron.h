@@ -68,6 +68,9 @@ class Neuron {
       /* Neuron Weights */
       vector<float> weights;
 
+      /* Previous Weight Change */
+      vector<float> d_weights;
+
       /* Neuron Bias */
       float bias;
 

@@ -29,7 +29,7 @@ class NeuralNetwork {
       vector<float> calculate(vector<float> inputs);
 
       /* Train Neural Network via Supervised Training */
-      void NeuralNetwork::train(float step, int epoch, vector< vector<float> > training_input, vector< vector<float> > training_output);
+      void train(float step, int epoch, vector< vector<float> > training_input, vector< vector<float> > training_output);
 
    private:
       /* Number of Network Inputs */
@@ -64,8 +64,6 @@ class NeuralNetwork {
 
       /* Calculate Outputs of Network */
       vector<float> calculateOutputs();
-
-     // void NeuralNetwork::updateOutputLayer(vector<float> training_output);
 
       void prepareUpdate(vector<float> training_output);
       void updateWB();

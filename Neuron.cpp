@@ -31,6 +31,7 @@ void Neuron::initNeuron(vector<Neuron> *inputs, int activation_function) {
 
    for (int i = 0; i < (*input_neurons).size(); i++) {
       weights.push_back(rand() / (float)RAND_MAX);
+      d_weights.push_back(0);
    }
 
    bias = rand() / (float)RAND_MAX;
@@ -49,6 +50,7 @@ vector<float> Neuron::getWeights() {
 /* Adjust Weights */
 void Neuron::updateWeight(int index, float value) {
    weights[index] -= value;
+   d_weights[index] = value;
 }
 
 /* Adjust Bias */
@@ -96,30 +98,23 @@ void Neuron::calculate() {
    float sum = 0;
 
    for (int i = 0; i < (*input_neurons).size(); i++) {
-      //cout << "   Input: " << (*input_neurons)[i].getOutput() << endl;
       sum += (*input_neurons)[i].getOutput() * weights[i];
-      //cout << "   Weight: " << weights[i] << endl;
-      //cout << "   Index: " << i << endl;
    }
 
    sum += bias;
-   //cout << "Weight: " << weights[0] << endl;
-   //cout << "   Sum: " << sum << endl;
 
    if (activation == HT_ACTIVATION) {
-      //cout << "   HT" << endl;
       output = hyperbolic_tangent(sum, HYPERBOLIC_TANGENT_MAX, HYPERBOLIC_TANGENT_SLOPE);
    }
    else {
       output = sum * LINEAR_SCALE;
    }
 
-   //cout << "   Output of Neuron: " << output << endl;
+   //Check if ouput is too large
 }
 
 /* Hyperbolic Tangent Activation Function */
 float Neuron::hyperbolic_tangent(float input, float abs_max, float slope) {
-   // float output = 0;
    float exp_pos = exp(slope * input);
    float exp_neg = exp(-slope * input);
 
@@ -130,11 +125,9 @@ float Neuron::hyperbolic_tangent(float input, float abs_max, float slope) {
       else {
          output = -abs_max;
       }
-      //cout << output << endl;
    }
    else {
       output = abs_max * ((exp_pos - exp_neg) / (exp_pos + exp_neg));
-      //cout << "HERE: " << input << endl;
    }
 
    return output;

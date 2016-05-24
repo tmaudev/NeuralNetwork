@@ -177,28 +177,6 @@ vector<float> NeuralNetwork::calculateOutputs() {
    return output;
 }
 
-// void NeuralNetwork::updateOutputLayer(vector<float> training_output) {
-//    float error, deriv_act, gradient, actual_output;
-//    vector<float> weights;
-
-//    /* Iterate Through Each Neuron */
-//    for (int i = 0; i < (*output_layer).size(); i++) {
-//       actual_output = (*output_layer)[i].getOutput();
-//       error = training_output[i] - actual_output;
-//       deriv_act = hyperbolicTangentDerivative(actual_output);
-
-//       /* Iterate Through Each Weight */
-//       for (int j = 0; j < (*output_layer)[i].getWeights().size(); j++) {
-//          gradient = -error * deriv_act * actual_output;
-//          (*output_layer)[i].updateWeight(j, -training_step * gradient);
-//       }
-//    }
-// }
-
-// void NeuralNetwork::updateWeight(int layer, ) {
-
-// }
-
 void NeuralNetwork::updateWB() {
    vector<float> weights;
    float gradient, phi_deriv, bias_gradient;
@@ -247,21 +225,8 @@ void NeuralNetwork::prepareUpdate(vector<float> training_output) {
 
             phi_deriv = (*hidden_layers[i])[k].getPhiDeriv();
             (*layer_costs[i])[j] += (*layer_costs[i + 1])[k] * phi_deriv * weights[j];
-            //cout << "Phi: " << phi_deriv << endl;
-
-            /* Output Layer */
-            // if (i == num_hidden_layers) {
-            //    error = training_output[k] - (*hidden_layers[i])[k].getOutput();
-            //    phi_deriv = (*hidden_layers[i])[k].getPhiDeriv();
-            //    (*layer_costs[i])[j] += -error * phi_deriv * weights[j];
-            // }
-            // else {
-            //    phi_deriv = (*hidden_layers[i])[k].getPhiDeriv(); // changed this to k instead of j
-            //    (*layer_costs[i])[j] += (*layer_costs[i + 1])[k] * phi_deriv * weights[j];
-            // }
          }
       }
-     // cout << "Layer Cost: " << layer_cost[i] << endl;
    }   
 }
 
@@ -273,14 +238,9 @@ void NeuralNetwork::train(float step, int epoch, vector< vector<float> > trainin
    training_step = step;
 
    for (int i = 0; i < epoch; i++) {
-      //RANDOMIZE ORDER??
-      random = (rand() / (float)RAND_MAX) * (size - 1);
+
+      random = (rand() / (float)RAND_MAX) * (size);
       //cout << random << endl;
-      //Calculate Network
-      //cout << "Input: " << training_input[i % size][0] << endl;
-      // cout << "Output: " << training_output[i % size][0] << endl;
-      //cout << training_input[i % size].size() << endl;
-      //cout << "Training Pair: " << training_input[i % size][0] << "  |  " << training_output[i % size][0] << endl;
 
       calculate(training_input[random]);
 
@@ -292,7 +252,5 @@ void NeuralNetwork::train(float step, int epoch, vector< vector<float> > trainin
          cout << "FAIL" << endl;
          break;
       }
-      //Update Ouput Layer Node Weights
-      //updateOutputLayer(training_output[i % epoch]);
    }
 }
