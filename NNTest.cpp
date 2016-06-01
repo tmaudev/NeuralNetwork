@@ -9,6 +9,7 @@
 #include "NeuralNetwork.h"
 #define HIDDEN_LAYERS 1
 
+/* Tests Manufacturer Data for Thrusters */
 void testThruster() {
    vector<int> hidden_layers(HIDDEN_LAYERS);
 
@@ -73,6 +74,7 @@ void testThruster() {
    }
 }
 
+/* Tests Neural Network Using XOR Problem */
 void testXOR() {
    vector<int> hidden_layers(HIDDEN_LAYERS);
 
@@ -149,8 +151,9 @@ void testXOR() {
    cout << endl;
 }
 
+/* Main */
 int main() {
-   //testXOR();
+   testXOR();
    testThruster();
 
    return 0;

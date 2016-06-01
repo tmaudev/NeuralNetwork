@@ -128,7 +128,7 @@ void Neuron::calculate() {
       output = sum * LINEAR_SCALE;
    }
 
-   //Check if ouput is too large
+   //Check if output is too large
 }
 
 /* Hyperbolic Tangent Activation Function */

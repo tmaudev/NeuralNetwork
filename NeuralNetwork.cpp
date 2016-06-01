@@ -177,27 +177,7 @@ vector<float> NeuralNetwork::calculateOutputs() {
    return output;
 }
 
-void NeuralNetwork::updateWB() {
-   vector<float> weights;
-   float gradient, phi_deriv, bias_gradient;
-
-   for (int i = 0; i < hidden_layers.size(); i++) {
-      for (int j = 0; j < (*hidden_layers[i]).size(); j++) {
-         weights = (*hidden_layers[i])[j].getWeights();
-
-         for (int k = 0; k < weights.size(); k++) {
-            phi_deriv = (*hidden_layers[i])[j].getPhiDeriv();
-            gradient = (*layer_costs[i + 1])[j] * phi_deriv * (*hidden_layers[i])[j].getInput(k);
-            (*hidden_layers[i])[j].updateWeight(k, training_step * gradient);
-         }
-
-         /* Update Bias */
-         bias_gradient = (*layer_costs[i + 1])[j] * phi_deriv;
-         (*hidden_layers[i])[j].updateBias(training_step * bias_gradient);
-      }
-   }
-}
-
+/* Pre-Calculate Reusable Computations */
 void NeuralNetwork::prepareUpdate(vector<float> training_output) {
    float error, phi_deriv;
    vector<float> weights;
@@ -209,6 +189,7 @@ void NeuralNetwork::prepareUpdate(vector<float> training_output) {
       }
    }
 
+   /* Calculate Error Costs */
    for (int i = 0; i < num_outputs; i++) {
       error = training_output[i] - (*hidden_layers[num_hidden_layers])[i].getOutput();
       (*layer_costs[num_hidden_layers + 1])[i] = -error;
@@ -222,7 +203,6 @@ void NeuralNetwork::prepareUpdate(vector<float> training_output) {
 
          for (int k = 0; k < (*hidden_layers[i]).size(); k++) {
             weights = (*hidden_layers[i])[k].getWeights();
-
             phi_deriv = (*hidden_layers[i])[k].getPhiDeriv();
             (*layer_costs[i])[j] += (*layer_costs[i + 1])[k] * phi_deriv * weights[j];
          }
@@ -230,26 +210,57 @@ void NeuralNetwork::prepareUpdate(vector<float> training_output) {
    }   
 }
 
+/* Update Weights and Biases */
+void NeuralNetwork::updateWB() {
+   vector<float> weights;
+   float gradient, phi_deriv, bias_gradient;
+
+   for (int i = 0; i < hidden_layers.size(); i++) {
+      for (int j = 0; j < (*hidden_layers[i]).size(); j++) {
+         weights = (*hidden_layers[i])[j].getWeights();
+
+         /* Iterate Through Weights */
+         for (int k = 0; k < weights.size(); k++) {
+            phi_deriv = (*hidden_layers[i])[j].getPhiDeriv();
+            gradient = (*layer_costs[i + 1])[j] * phi_deriv * (*hidden_layers[i])[j].getInput(k);
+
+            /* Update Weight */
+            (*hidden_layers[i])[j].updateWeight(k, training_step * gradient);
+         }
+
+         /* Update Bias */
+         bias_gradient = (*layer_costs[i + 1])[j] * phi_deriv;
+         (*hidden_layers[i])[j].updateBias(training_step * bias_gradient);
+      }
+   }
+}
+
 /* Train Neural Network via Supervised Training */
 void NeuralNetwork::train(float step, int epoch, vector< vector<float> > training_input, vector< vector<float> > training_output) {
    int size = training_input.size();
    int random;
 
+   /* Set Training Step */
    training_step = step;
 
+   /* Train According to Epoch */
    for (int i = 0; i < epoch; i++) {
 
+      /* Randomize Training */
       random = rand() % size;
-      //cout << random << endl;
 
+      /* Calculate Neural Network Output */
       calculate(training_input[random]);
 
+      /* Prepare Neural Network for Updating */
       prepareUpdate(training_output[random]);
 
+      /* Update Weights and Biases */
       updateWB();
 
+      /* Print Error if Network Calculation Fails */
       if (errno == ERANGE) {
-         cout << "FAIL" << endl;
+         cout << "Output Exeeds Range..." << endl;
          break;
       }
    }

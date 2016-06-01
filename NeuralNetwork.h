@@ -65,7 +65,10 @@ class NeuralNetwork {
       /* Calculate Outputs of Network */
       vector<float> calculateOutputs();
 
+      /* Pre-Calculate Reusable Computations */
       void prepareUpdate(vector<float> training_output);
+
+      /* Update Weights and Biases */
       void updateWB();
 };
 
