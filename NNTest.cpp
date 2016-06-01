@@ -103,7 +103,7 @@ void testXOR() {
       training_output.push_back(*output);
    }
 
-   hidden_layers[0] = 2;
+   hidden_layers[0] = 5;
 
    NeuralNetwork net(2, hidden_layers, 1);
 

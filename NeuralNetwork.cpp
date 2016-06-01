@@ -235,10 +235,31 @@ void NeuralNetwork::updateWB() {
    }
 }
 
+/* Calculate MSE */
+void NeuralNetwork::calculateMSE(vector< vector<float> > training_input, vector< vector<float> > training_output, ofstream &file) {
+   int input_size = training_input.size();
+   vector<float> outputs;
+   float err_sum = 0, mse;
+
+   for (int i = 0; i < input_size; i++) {
+      outputs = calculate(training_input[i]);
+
+      for (int j = 0; j < num_outputs; j++) {
+         err_sum += training_output[i][j] - outputs[j];
+      }
+   }
+
+   mse = (err_sum * err_sum) / (float)input_size;
+   file << mse << endl;
+}
+
 /* Train Neural Network via Supervised Training */
 void NeuralNetwork::train(float step, int epoch, vector< vector<float> > training_input, vector< vector<float> > training_output) {
    int size = training_input.size();
    int random;
+   ofstream myfile;
+
+   myfile.open("errors.txt");
 
    /* Set Training Step */
    training_step = step;
@@ -258,10 +279,15 @@ void NeuralNetwork::train(float step, int epoch, vector< vector<float> > trainin
       /* Update Weights and Biases */
       updateWB();
 
+      /* Print MSE to File */
+      //calculateMSE(training_input, training_output, myfile);
+
       /* Print Error if Network Calculation Fails */
       if (errno == ERANGE) {
          cout << "Output Exeeds Range..." << endl;
          break;
       }
    }
+
+   myfile.close();
 }

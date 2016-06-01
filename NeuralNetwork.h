@@ -7,6 +7,7 @@
 #ifndef NEURAL_NETWORK_H
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 
 #include "Neuron.h"
@@ -70,6 +71,9 @@ class NeuralNetwork {
 
       /* Update Weights and Biases */
       void updateWB();
+
+      /* Calculate MSE */
+      void calculateMSE(vector< vector<float> > training_input, vector< vector<float> > training_output, ofstream &file);
 };
 
 #endif
