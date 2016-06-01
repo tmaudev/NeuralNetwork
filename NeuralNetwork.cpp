@@ -94,14 +94,14 @@ void NeuralNetwork::printWB() {
 
          /* Print Weights */
          for (int k = 0; k < weights.size(); k++) {
-            printf(" %5.5f", weights[k]);
+            printf(" %5.4f", weights[k]);
          }
 
          /* Get Bias from Neuron */
          bias = (*hidden_layers[i])[j].getBias();
 
          /* Print Bias */
-         printf("   Bias: %5.5f\n", bias);
+         printf("   Bias: %5.4f\n", bias);
       }
       cout << endl;
    }
@@ -117,14 +117,14 @@ void NeuralNetwork::printWB() {
 
       /* Print Weights */
       for (int j = 0; j < weights.size(); j++) {
-         printf(" %5.5f", weights[j]);
+         printf(" %5.4f", weights[j]);
       }
 
       /* Get Bias from Neuron */
       bias = (*output_layer)[i].getBias();
 
       /* Print Bias */
-      printf("   Bias: %5.5f\n", bias);
+      printf("   Bias: %5.4f\n", bias);
    }
 }
 
