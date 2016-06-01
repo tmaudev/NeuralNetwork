@@ -103,7 +103,7 @@ void testXOR() {
       training_output.push_back(*output);
    }
 
-   hidden_layers[0] = 5;
+   hidden_layers[0] = 2;
 
    NeuralNetwork net(2, hidden_layers, 1);
 
@@ -123,8 +123,7 @@ void testXOR() {
 
       test_output = net.calculate(test_input);
 
-      cout << "   Input: " << test_input[0] << " " << test_input[1] <<
-              "   Output: " << test_output[0] << endl;
+      printf("   Input: %d %d   Output: %.5f\n", (int)test_input[0], (int)test_input[1], test_output[0]);
    }
 
    cout << "\n-------------------------------------------------------------------" << endl;
@@ -145,8 +144,7 @@ void testXOR() {
 
       test_output = net.calculate(test_input);
 
-      cout << "   Input: " << test_input[0] << " " << test_input[1] <<
-              "   Output: " << abs((int)round(test_output[0])) << endl;
+      printf("   Input: %d %d   Output: %.5f\n", (int)test_input[0], (int)test_input[1], test_output[0]);
    }
    cout << endl;
 }
@@ -154,7 +152,7 @@ void testXOR() {
 /* Main */
 int main() {
    testXOR();
-   testThruster();
+   //testThruster();
 
    return 0;
 }
